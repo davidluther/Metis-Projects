@@ -13,7 +13,7 @@ Contains all Jupyter notebooks used throughout the project.
 * **0-Luther-Prelim:** initial exploration of scraping requirements
 * **1-Luther-Scraping:** more refined code and process for scraping
 * **2-Luther-Cleaning-Exploration:** cleaning function, exploration of data, assorted visualizations, cleaning draft
-* **3-Luther-Regression:** steps to building final regression model, test on validation set
+* **3-Luther-Regression:** steps to building and testing the final regression model
 
 ### Viz
 
