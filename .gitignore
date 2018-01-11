@@ -1,0 +1,11 @@
+
+*.ipynb_checkpoints*
+*.DS_Store*
+*.npz
+**/__pycache__/*
+*.log
+*.txt
+*/audio
+*/data
+*/pres
+*/specs
