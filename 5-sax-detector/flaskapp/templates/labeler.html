@@ -1,0 +1,175 @@
+<DOCTYPE html>
+<html>
+  <head>
+    <title>So many samples to label...</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="http://samplelabeler.davidluthermusic.com/labeler.css">
+
+    <!-- put css here if no link above:
+    <style type="text/css">
+    </style>
+    -->
+
+  </head>
+
+  <body>
+  <div id="main">
+    <section>
+      <h1>Audio Sample Labeler</h1>
+      <hr />
+    </section>
+
+    <section>
+      <h2>Labeler</h2>
+      <div class="center">
+
+        <div class="ctr_elem"> 
+          <audio controls>
+            <source src="{{mp3_link}}" type="audio/mpeg">
+            Your browser does not support the audio element.
+          </audio>
+        </div>
+
+        <div class="ctr_elem">
+          <button id="skip_button" onclick="skip_sample()">Skip Sample</button>
+        </div>
+
+        <div class="table" id="rdgroup"> 
+          <div class="table_row">
+            <div class="table_col"><b>Vocals</b></div>
+            <div class="table_col">Fore:
+              <input type="radio" id="but" name="vox" value='2' onclick="validate()">
+            </div>
+            <div class="table_col">Back:
+              <input type="radio" id="but" name="vox" value='1' onclick="validate()">
+            </div>
+            <div class="table_col">None:
+              <input type="radio" id="but" name="vox" value='0' onclick="validate()">
+            </div>
+          </div>
+          <div class="table_row">
+            <div class="table_col"><b>Saxophone</b></div>
+            <div class="table_col">Fore:
+              <input type="radio" id="but" name="sax" value='2' onclick="validate()">
+            </div>
+            <div class="table_col">Back:
+              <input type="radio" id="but" name="sax" value='1' onclick="validate()">
+            </div>
+            <div class="table_col">None:
+              <input type="radio" id="but" name="sax" value='0' onclick="validate()">
+            </div>
+          <div class="table_row">
+            <div class="table_col"><b>Piano</b></div>
+            <div class="table_col">Fore:
+              <input type="radio" id="but" name="pno" value='2' onclick="validate()">
+            </div>
+            <div class="table_col">Back:
+              <input type="radio" id="but" name="pno" value='1' onclick="validate()">
+            </div>
+            <div class="table_col">None:
+              <input type="radio" id="but" name="pno" value='0' onclick="validate()">
+            </div>
+          </div>
+        </div>
+        
+        <div style="clear: both; margin-bottom: 1em;"></div>
+
+        <div class="ctr_elem">
+          <button id="submit_button" onclick="submit_labels()">Submit</button>
+        </div>
+
+        <p style="text-align: center">Need a <a href="/">refresher on directions</a>?</p>
+
+      </div>
+    </section>
+  
+    </div>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+    <script>
+    document.getElementById("submit_button").disabled = true;
+
+    // reset radio buttons on page load (Firefox doesn't do automatically)
+    var inputs = document.getElementsByTagName("input");
+    for (var i = 0; i < inputs.length; i++) {
+      if (inputs[i].type == "radio") {
+        inputs[i].checked = false;
+      }
+    } 
+
+    var chunk_id = {{served_id}};
+    console.log(chunk_id)
+
+    function validate() {
+      // allow Submit button to be checked when three radios checked
+      var sel = $("input:radio:checked").length;
+      if (sel == 3) {
+        document.getElementById("submit_button").disabled = false;
+      }
+    }
+
+    function skip_sample() {
+      // tell python to render the sample useless
+      var skip_dict = {"chunk_id": chunk_id};
+      console.log(skip_dict)
+    
+      $.ajax({
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        url: "/skip_sample",
+        dataType: "json",
+        async: true,
+        data: JSON.stringify(skip_dict),
+        success: function(data) {
+          console.log("Sample skipped")
+          location.reload();
+        },
+        error: function(result) {
+          console.log("Something went wrong")
+        }
+      })
+    }
+
+    function submit_labels() {
+      // send labels to python for queued sample
+      var sax = document.querySelector("input[name='sax']:checked").value;
+      var sax = Number(sax)
+      console.log(sax)
+      var vox = document.querySelector("input[name='vox']:checked").value;
+      var vox = Number(vox)
+      console.log(vox)
+      var pno = document.querySelector("input[name='pno']:checked").value;
+      var pno = Number(pno)
+      console.log(pno)
+      var label_dict = {"chunk_id": chunk_id,
+                        "sax": sax,
+                        "vox": vox,
+                        "pno": pno
+                       }
+      console.log(label_dict)
+
+      $.ajax({
+        type: "POST",
+        contentType: "application/json; charset=utf-8",
+        url: "/label_sample",
+        dataType: "json",
+        async: true,
+        data: JSON.stringify(label_dict),
+        success: function(data) {
+          console.log("Sample labels logged")
+          location.reload();
+        },
+        error: function(result) {
+          console.log("Something went wrong")
+        }
+      })
+    }
+
+    function reload() {
+      location.reload();
+    }
+
+    </script>
+  </body>
+</html>

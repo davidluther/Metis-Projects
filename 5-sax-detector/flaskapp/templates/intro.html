@@ -1,0 +1,45 @@
+<DOCTYPE html>
+<html>
+  <head>
+    <title>Welcome to data labeling paradise.</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="http://samplelabeler.davidluthermusic.com/labeler.css">
+
+    <!-- put css here if no link above:
+    <style type="text/css">
+    </style>
+    -->
+
+  </head>
+
+  <body>
+    <div id="main">
+    <section>
+      <h1>Audio Sample Labeler</h1>
+      <hr />
+    </section>
+
+    <section>
+      <h2>Who, What, Why, etc.</h2>
+      <p>My name is <a href="http://davidluthermusic.com">David Luther</a>, and I've spent most of my adult life as a professional musician. Recently, I decided to transition into the world of data science. For a current project, I'm trying to train a neural net to recognize whether a song contains saxophone, vocals, piano, or none of the three. To do this, I need a whole bunch of properly-labeled data, which is where you come in. I’ve chopped a number of songs into 5-second clips, and using this site, you can listen to an unlabeled sample, select the proper labels, and then submit them to the database. Fun for you and incredibly helpful for me.</p>
+      <h2>Directions</h2>
+      <p>Play the loaded sample, then select Foreground, Background, or None for each of the three elements. Foreground means a solo instrument or vocalist. Background means a piano in a band, a sax in a section, etc. There are samples for which the most appropriate selection for each element will be None.</p>
+      <p>For the sake of this project, Piano will include acoustic piano only. No Rhodes, Wurlitzer, other electric pianos, organ, synth, etc.</p>
+      <p>When a button is selected for each element, the Submit button will activate. Double-check your choices, then click to submit your labels to the database and load another sample. Repeat as much as you'd like</p>
+      <h4>When To Skip?</h4>
+      <p>Are you guessing? <b>This is not a test, and guessing will do more harm than good.</b> If you don't know or can't tell, hit Skip instead. Also do so if the sample is mostly silence, or you only hear a fraction of one of the three elements at the beginning or end of the sample.</p>
+      <p>Ready to go? Just a click away...</p>
+
+      <div class="ctr_elem">
+        <form method="LINK" action="/labeler">
+          <input type="submit" value="Get Labeling">
+        </form>
+        <!-- <button id="submit_button" onclick="go()">Get Labeling</button> -->
+      </div>
+
+    </section>
+    
+    </div>
+
+  </body>
+</html>
