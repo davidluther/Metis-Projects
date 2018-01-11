@@ -3,7 +3,7 @@
 ---
 
 ## Overview
-Being an aviation enthusiast of many years, I chose to look at a common complaint of many air travelers: delay. Would there be a way to predict, with any accuracy, the degree to which one might be late on a particular flight? For the scope of this project, I focused on arrivals at one airport (ORD) from one origin (LGA) operated by one airline (American). I collected available arrival information by scraping data from FlightAware.com. It was my hypothesis that some correlation might be found between lateness (actual arrival minus scheduled arrival) and both day of week and time of day. I used these features and others to build a linear regression model in an attempt to predict the lateness of flights on this route.
+Being an aviation enthusiast of many years, I chose to look at a common complaint of many air travelers: delay. Would there be a way to predict, with any accuracy, the degree to which one might be late on a particular flight? For the scope of this project, I focused on arrivals at one airport (ORD) from one origin (LGA) operated by one airline. I collected available arrival information by scraping data from FlightAware.com. It was my hypothesis that some correlation might be found between lateness (actual arrival minus scheduled arrival) and both day of week and time of day. I used these features and others to build a linear regression model in an attempt to predict the lateness of flights on this route.
 
 ## Folder Contents
 
