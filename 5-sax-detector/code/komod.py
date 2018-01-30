@@ -1,4 +1,6 @@
-# all functions and classes necessary for project Kojak
+# METIS PROJECT 5 - KOJAK
+#
+# Module containing all pre-PyTorch functions/classes
 
 import numpy as np
 import pandas as pd
@@ -17,9 +19,10 @@ from datetime import datetime
 # GLOBAL VARIABLES AND OBJECTS
 
 client = MongoClient(
-    "mongodb://{}:{}@18.216.205.251/kojak".format(
+    "mongodb://{}:{}@{}/kojak".format(
         str(os.environ['mdbUN']),
-        str(os.environ['mdbPW'])
+        str(os.environ['mdbPW']),
+        str(os.environ['mdbIP'])
     )
 )
 kdb = client.kojak

@@ -1,3 +1,5 @@
+# METIS PROJECT 5 - KOJAK
+#
 # module of all pytorch-related code for Kojak
 
 import komod
@@ -25,9 +27,10 @@ import matplotlib.pyplot as plt
 # GLOBAL VARIABLES AND OBJECTS
 
 client = MongoClient(
-    "mongodb://{}:{}@18.216.205.251/kojak".format(
+    "mongodb://{}:{}@{}/kojak".format(
         str(os.environ['mdbUN']),
-        str(os.environ['mdbPW'])
+        str(os.environ['mdbPW']),
+        str(os.environ['mdbIP'])
     )
 )
 kdb = client.kojak
