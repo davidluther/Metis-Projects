@@ -33,11 +33,7 @@ After training on the full train set and testing on train and test, I was able t
 * **wav-to-mp3.py**: script to convert all .wav samples to .mp3
 
 #### Jupyter Notebooks
-* **00-audio-os-exploration.ipynb**: learning basic capabilities of the os and Librosa modules necessary for the project
 * **01-audio-chunking-converting.ipynb**: preliminary notebook running audio chunking and wav-mp3 conversion
-* **02-mongo-on-EC2.ipynb**: connecting to MongoDB on the EC2, review of Mongo, development of database ops for dependent functions, basic sketchpad for DB queries and such
-* **03-flask-app-skeches.ipynb**: sketching DB operations necessary for web app
-* **05-spectrograms.ipynb**: first approach to mass-generation of spectrograms, made obsolete by loading process of PyTorch dataset class 
 * **10-pytorch-begins.ipynb**: development of dataset class, a method to calculate outputs to FC layer given dimensions of input and CV/MP layers, CNN model class, fit/predict functions, scoring function; initial runs with small-scale spectrograms
 * **11-pytorch-tuning.ipynb**: development of CNN architecture, initial train-test pipeline
 * **12-pytorch-cv-dev.ipynb**: development of cross-validation function
