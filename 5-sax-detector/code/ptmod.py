@@ -2,13 +2,13 @@
 #
 # module of all pytorch-related code for Kojak
 
-import komod
+import audiomod
 from pymongo import MongoClient
 import pandas as pd
 import numpy as np
 from sklearn import metrics
 import torch
-import torchvision
+# import torchvision
 # from torchvision import transforms, utils
 import torch.utils.data as data_utils
 from torch.autograd import Variable
@@ -28,9 +28,9 @@ import matplotlib.pyplot as plt
 
 client = MongoClient(
     "mongodb://{}:{}@{}/kojak".format(
-        str(os.environ['mdbUN']),
-        str(os.environ['mdbPW']),
-        str(os.environ['mdbIP'])
+        os.environ['mdbUN'],
+        os.environ['mdbPW'],
+        os.environ['mdbIP']
     )
 )
 kdb = client.kojak
@@ -76,10 +76,10 @@ class SpectroDataset(data_utils.Dataset):
         return self.sample_frame.shape[0]
     
     def __getitem__(self, ix):
-        """Makes and returns spectrogram of requested item"""
+        """Creates and returns spectrogram of requested item"""
         chunk_id = self.sample_frame.loc[ix, 'chunk_id']
-        y, sr = komod.audio_loader(chunk_id)
-        sample = komod.make_spectro(
+        y, sr = audiomod.audio_loader(chunk_id)
+        sample = audiomod.make_spectro(
             y, 
             sr,
             hl = int(self.audio_params['hl'] / self.scaling),
@@ -88,7 +88,7 @@ class SpectroDataset(data_utils.Dataset):
         )
         # add singleton dimension
         sample = np.expand_dims(sample, 0)
-        # normalize on -1-1 scale as done in PyTorch tutorial
+        # normalize on -1 to 1 scale as done in PyTorch tutorial
         sample = normalize_spec(sample, low=-1)
         # convert to torch float tensor
         sample = torch.from_numpy(sample).float()
@@ -104,13 +104,13 @@ class SpectroDataset(data_utils.Dataset):
 class CNN_cpcpff(nn.Module):
     """
     params: Pass input params as a dictionary where each item is a layer and 
-    each value is a list, following this convention:
+        each value is a list, following this convention:
     
-    Convolutional: c1: [kernel, stride, channels_out]
-    Max Pooling: p1: [kernel, stride]
-    Fully Connected: f1: [channels_in, channels_out]
+        Convolutional: c1: [kernel, stride, channels_out]
+        Max Pooling: p1: [kernel, stride]
+        Fully Connected: f1: [channels_in, channels_out]
     
-    For example:
+        For example:
     
         params = {
             'c1': [5,1,10],
@@ -121,7 +121,7 @@ class CNN_cpcpff(nn.Module):
             'f2': [50,2]
         }
     
-    All values must be integers.
+        All list values must be integers.
     
     rs: random seed (int)
 
@@ -131,15 +131,15 @@ class CNN_cpcpff(nn.Module):
     
     def __init__(self, params, rs=23, normal=True):
         super(CNN_cpcpff, self).__init__()
-        # (in channels, out channels, kernel, stride=s)
         self.p = params
         self.rs = rs
         self.seed_gen = torch.manual_seed(self.rs)
+        # in channels, out channels, kernel, stride=s
         self.conv1 = nn.Conv2d(1, 
                                self.p['c1'][2], 
                                self.p['c1'][0], 
                                stride=self.p['c1'][1])
-        # (2x2 kernel, stride=2 -- stride defaults to kernel)
+        # 2x2 kernel, stride=2 -- stride defaults to kernel
         self.pool1 = nn.MaxPool2d(self.p['p1'][0], self.p['p1'][1])
         self.conv2 = nn.Conv2d(self.p['c1'][2], 
                                self.p['c2'][2], 
@@ -150,14 +150,16 @@ class CNN_cpcpff(nn.Module):
         self.fc2 = nn.Linear(self.p['f2'][0], self.p['f2'][1])
         if normal:
             self.apply(init_norm_auto)
+        # do I need to clear this?
         self.seed_gen = None
         
     def forward(self, x):
         x = self.pool1(F.relu(self.conv1(x)))
         x = self.pool2(F.relu(self.conv2(x)))
-        x = x.view(x.size(0), -1)  # need to reshape for fully connected layer
+        x = x.view(x.size(0), -1) # need to reshape for fully connected layer
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
+        x = F.softmax(x)
         return x
 
     def save_myself(self, fname, dir_out='../data'):
@@ -183,7 +185,7 @@ def reduce_axis(pix_in, kernel_size, stride, drop_last=False):
     ---
     IN
     pix_in: number of pixels along input axis (int)
-    kernel_size: assuming a square filter, pixels on one size (int)
+    kernel_size: assuming a square filter, pixels on one side (int)
     stride: pixels per step (int)
     drop_last: if True, ignore pixels on last step if fewer than
         filter_dim (bool)
@@ -206,7 +208,7 @@ def cnn_pixels_out(dim_in, layers, drop_last=False):
     ---
     IN
     dim_in: (C, W, H) format, where each is an integer (tup or list)
-    layer_info: ((kernel, stride, filters_out), ...) format, where each is an 
+    layers: ((kernel, stride, filters_out), ...) format, where each is an 
         int. If a max pooling layer, set filters to 0 (tup or list)
     OUT
     pixels_out: number of pixels going into FC layer (int)
@@ -291,10 +293,11 @@ def fit(cnn,
         batch_size=batch_size, 
         shuffle=True,
         num_workers=2,
-        drop_last=False # not sure the merits of doing this or not?
+        drop_last=True
     )
 
-    loss_by_epoch = []
+    # if this throws errors, it's probably because of switch to array
+    loss_by_epoch = np.array([])
 
     for epoch in range(num_epochs):
         print("Epoch", epoch+1)
@@ -318,7 +321,7 @@ def fit(cnn,
             loss.backward()
             # update weights
             optimizer.step()         
-            #verbosity
+            # verbosity
             sub_now = time.perf_counter()
             print("\r * {} loss: {:.3f}\tTime: {:.3f} ms"
                   .format(i, loss.data[0], (sub_now-sub_then)*1000), end='')
@@ -334,13 +337,13 @@ def fit(cnn,
         after = cnn.state_dict()['conv2.weight']
         update = not np.allclose(before.numpy(), after.numpy())
         avg_loss = running_loss/i
-        loss_by_epoch.append(loss_per_batch)
+        loss_by_epoch = np.vstack((loss_by_epoch, loss_per_batch))
         print("\r * Avg loss: {:.3f}\tTime: {:.3f} ms"
               .format(running_loss/i, (now-then)*1000))
         print(" * Weights updated:", update)
     print('\n\aTraining Complete')
 
-    return np.vstack(loss_by_epoch)
+    return loss_by_epoch
 
 
 def predict(cnn, dataset, batch_size=4, res_format='df'):
@@ -359,7 +362,7 @@ def predict(cnn, dataset, batch_size=4, res_format='df'):
         predicted, output_array) as value (dict); if 'df', pandas dataframe
     """
     
-    test_loader = data_utils.DataLoader(
+    loader = data_utils.DataLoader(
         dataset, 
         batch_size=batch_size, 
         shuffle=False, # set for False for test set
@@ -369,7 +372,7 @@ def predict(cnn, dataset, batch_size=4, res_format='df'):
     results = {}
     
     # could clean this up to load it straight into df instead of dict
-    for data in test_loader:
+    for data in loader:
         spectros, labels, chunk_ids = data
         outputs = cnn(Variable(spectros))
         _, pred = torch.max(outputs.data, 1)
@@ -499,7 +502,7 @@ def crossval(
     """ 
 
     # add folds column to dataset df
-    df = komod.assign_cv_groups(datagroup_df, folds=folds)
+    df = audiomod.assign_cv_groups(datagroup_df, folds=folds)
 
     scores_bundle = {}
     losses_per_fold = []

@@ -25,7 +25,7 @@ After training on the full train set and testing on train and test, I was able t
 ### Code
 
 #### Python Modules and Scripts
-* **komod.py**: python module containing all functions/classes developed for pre-PyTorch operations (chunking audio, database operations, spectrogram generation, etc.)
+* **audiomod.py**: python module containing all functions/classes developed for pre-PyTorch operations (chunking audio, database operations, spectrogram generation, etc.)
 * **ptmod.py**: python module containing all functions/classes for PyTorch and related operations
 * **chunk-queued-audio.py**: script to convert all audio files in ../audio/queue directory to 5 second .wav samples
 * **db-status.py**: script to generate a report on labeled samples from DB
@@ -34,7 +34,8 @@ After training on the full train set and testing on train and test, I was able t
 
 #### Jupyter Notebooks
 * **01-audio-chunking-converting.ipynb**: preliminary notebook running audio chunking and wav-mp3 conversion
-* **10-pytorch-begins.ipynb**: development of dataset class, a method to calculate outputs to FC layer given dimensions of input and CV/MP layers, CNN model class, fit/predict functions, scoring function; initial runs with small-scale spectrograms
+* **10-0-pytorch-dataset-data-loader.ipynb**: development of dataset class, exploration of data loader object
+* **10-1-pytorch-cnn-prototype.ipynb**: development of a method to calculate outputs to FC layer given dimensions of input and CV/MP layers, CNN model class, fit/predict functions, scoring function; initial runs with small-scale spectrograms 
 * **11-pytorch-tuning.ipynb**: development of CNN architecture, initial train-test pipeline
 * **12-pytorch-cv-dev.ipynb**: development of cross-validation function
 * **13-pytorch-init.ipynb**: exploring PyTorch initialization methods

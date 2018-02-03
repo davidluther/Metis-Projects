@@ -20,9 +20,9 @@ from datetime import datetime
 
 client = MongoClient(
     "mongodb://{}:{}@{}/kojak".format(
-        str(os.environ['mdbUN']),
-        str(os.environ['mdbPW']),
-        str(os.environ['mdbIP'])
+        os.environ['mdbUN'],
+        os.environ['mdbPW'],
+        os.environ['mdbIP']
     )
 )
 kdb = client.kojak
