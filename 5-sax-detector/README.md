@@ -43,7 +43,7 @@ After training on the full train set and testing on train and test, I was able t
 * **15-specs-for-viz.ipynb**: simple function for visualizing and printing spectrograms to .png
 * **16-pytorch-full-train-test-1.ipynb**: creating a new test set from DB, first full train/test run
 
-## Flask App
+### Flask App
 
 * **labeler.py**: labeler app code
 * **finished.html**: (in templates) page to display if all samples are labeled
