@@ -1,3 +1,3 @@
-from komod import db_status
+from audiomod import db_status
 
 db_status()

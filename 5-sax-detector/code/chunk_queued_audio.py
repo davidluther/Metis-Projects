@@ -1,5 +1,5 @@
 from sys import argv, exit
-from komod import chunk_queue
+from audiomod import chunk_queue
 
 script, log_val = argv
 

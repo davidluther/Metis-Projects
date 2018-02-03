@@ -1,4 +1,4 @@
 # makes spectrograms of labeled samples for which they have not yet been made
-import komod
+from audiomod import batch_spectros()
 
-komod.batch_spectros()
+batch_spectros()
