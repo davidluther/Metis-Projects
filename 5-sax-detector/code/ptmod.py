@@ -8,8 +8,6 @@ import pandas as pd
 import numpy as np
 from sklearn import metrics
 import torch
-# import torchvision
-# from torchvision import transforms, utils
 import torch.utils.data as data_utils
 from torch.autograd import Variable
 import torch.nn as nn
@@ -153,13 +151,15 @@ class CNN_cpcpff(nn.Module):
         # do I need to clear this?
         self.seed_gen = None
         
-    def forward(self, x):
+    def forward(self, x, softmax=False):
         x = self.pool1(F.relu(self.conv1(x)))
         x = self.pool2(F.relu(self.conv2(x)))
         x = x.view(x.size(0), -1) # need to reshape for fully connected layer
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
-        x = F.softmax(x)
+        # make this an optional?
+        if softmax:
+            x = F.softmax(x)
         return x
 
     def save_myself(self, fname, dir_out='../data'):
@@ -297,7 +297,8 @@ def fit(cnn,
     )
 
     # if this throws errors, it's probably because of switch to array
-    loss_by_epoch = np.array([])
+    # loss_by_epoch = np.array([])
+    loss_by_epoch = []
 
     for epoch in range(num_epochs):
         print("Epoch", epoch+1)
@@ -337,13 +338,13 @@ def fit(cnn,
         after = cnn.state_dict()['conv2.weight']
         update = not np.allclose(before.numpy(), after.numpy())
         avg_loss = running_loss/i
-        loss_by_epoch = np.vstack((loss_by_epoch, loss_per_batch))
+        loss_by_epoch.append(loss_per_batch)
         print("\r * Avg loss: {:.3f}\tTime: {:.3f} ms"
               .format(running_loss/i, (now-then)*1000))
         print(" * Weights updated:", update)
     print('\n\aTraining Complete')
 
-    return loss_by_epoch
+    return np.vstack(loss_by_epoch)
 
 
 def predict(cnn, dataset, batch_size=4, res_format='df'):
@@ -374,7 +375,7 @@ def predict(cnn, dataset, batch_size=4, res_format='df'):
     # could clean this up to load it straight into df instead of dict
     for data in loader:
         spectros, labels, chunk_ids = data
-        outputs = cnn(Variable(spectros))
+        outputs = cnn(Variable(spectros), softmax=True)
         _, pred = torch.max(outputs.data, 1)
         for c_id, y, y_hat, out in zip(chunk_ids, labels, pred, outputs.data):
             results[c_id] = (y, y_hat, out)
@@ -395,7 +396,7 @@ def results_to_df(results):
     df: pandas dataframe of results 
     """
 
-    cols = ['chunk_id', 'actual', 'pred', 'e0', 'e1']
+    cols = ['chunk_id', 'actual', 'pred', 'p0', 'p1']
     results_trans = OrderedDict.fromkeys(cols)
     for k in results_trans.keys():
         results_trans[k] = []
