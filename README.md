@@ -1,7 +1,7 @@
 # Metis Projects
 This folder houses all code and supplemental materials for projects completed while attending the Metis data science bootcamp.
 
-### Project 5 (Kojak): Saxophone Detector
+### Project 5 (Kojak): Sax | Not Sax
 Using PyTorch, built a convolutional neural net to detect the presence of saxophone in an audio clip. Also built and hosted a web app to label audio samples using Flask and JavaScript in an effort to create my own dataset.
 
 ### Project 4 (Fletcher): Say It Loud
