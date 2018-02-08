@@ -9,7 +9,7 @@ An exercise in exploratory data analysis and cleaning, doing pushups with pandas
 #### Project 2 (Luther): Delays Expected
 Built a linear regression model to predict lateness of flights between New York Laguardia and Chicago O'Hare. Scraped all data with BeautifulSoup and Selenium.
 
-### Project 4 (Fletcher): Say It Loud
+#### Project 4 (Fletcher): Say It Loud
 Used NLP, topic modeling, and clustering to tease out themes of social awareness in the lyrics of the Billboard Year-End Hot 100 from 1965-1975. Also built a basic recommender to find songs similar to songs containing these themes.
 
 #### Project 5 (Kojak): Saxophone Detector
