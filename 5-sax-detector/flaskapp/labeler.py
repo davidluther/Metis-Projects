@@ -1,8 +1,14 @@
 import flask
 from flask import request, render_template
 from pymongo import MongoClient
+import os
 
-client = MongoClient("mongodb://general:labelTHIS23@18.216.205.251/kojak")
+client = MongoClient("mongodb://{}:{}@{}/kojak".format(
+        os.environ['mdbUN'],
+        os.environ['mdbPW'],
+        os.environ['mdbIP']
+    )
+)
 kdb = client.kojak
 # coll = kdb.flask_test
 coll = kdb.test_songs
